@@ -15,22 +15,33 @@ public class Controller {
 
 
     public static void main(String[] args) {
-        if (args.length != 3 && args.length != 5) {
-            System.out.println("Invalid amount of arguments");
+        List<String> currentArgList = new ArrayList<>(Arrays.asList(args));
+        List<String> uniqueArgList = new ArrayList<>(new LinkedHashSet<>(currentArgList));
+        if (currentArgList.size() != uniqueArgList.size()) {
+            System.out.println("Dublicates found");
             return;
         }
-        List<String> currentArgList = Arrays.asList(args);
+        currentArgList.clear();
+        currentArgList.addAll(uniqueArgList);
+
+        /*if (currentArgList.size() != 3 && currentArgList.size() != 5) {
+            System.out.println("Invalid amount of arguments");
+            return;
+        }*/
         fillArgumentSets();
-        if (!argSet3.containsAll(currentArgList)){
-            if (!argSet5.containsAll(currentArgList)) {
-                System.out.println("Invalid arguments");
-                return;
-            }
+        if (currentArgList.size() != 3 && currentArgList.size() != 5
+                || !listEqualsIgnoreOrder(argSet3, currentArgList)
+                && !listEqualsIgnoreOrder(argSet5, currentArgList)){
+            System.out.println("Invalid arguments");
+            return;
         }
 
         SecureRandom secureRandom = new SecureRandom();
 
-        int computerMove = secureRandom.nextInt(currentArgList.size());
+        byte[] computerMoveByte = new byte[1];
+        secureRandom.nextBytes(computerMoveByte);
+        int computerMoveByteValue = Math.abs((int) computerMoveByte[0]);
+        int computerMove = computerMoveByteValue * currentArgList.size() / 127;
         String computerMoveString = currentArgList.get(computerMove);
 
         byte[] randomKey = new byte[KEY_SIZE_BYTES];
@@ -129,5 +140,9 @@ public class Controller {
             hexString.append(hex);
         }
         return hexString.toString();
+    }
+
+    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
+        return new HashSet<>(list1).equals(new HashSet<>(list2));
     }
 }
