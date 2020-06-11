@@ -10,11 +10,11 @@ import java.util.*;
 
 /**
  * @author Renate Lobach
- * @version 2.0
+ * @version 2.1
  */
 
 public class Controller {
-    private static int KEY_SIZE_BYTES = 32;
+    private static int KEY_SIZE_BYTES = 64;
 
     public static void main(String[] args) {
         List<String> currentArgList = new ArrayList<>(Arrays.asList(args));
