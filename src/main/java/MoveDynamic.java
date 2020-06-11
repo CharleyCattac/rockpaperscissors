@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Deprecated since ver. 2.0
+ */
+
 public class MoveDynamic {
     private static MoveDynamic instance = null;
     private static List<Move> moves = new ArrayList<>(5);

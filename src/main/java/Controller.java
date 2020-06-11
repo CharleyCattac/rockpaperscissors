@@ -8,11 +8,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
 
+/**
+ * @author Renate Lobach
+ * @version 1.0
+ */
+
 public class Controller {
     private static int KEY_SIZE_BYTES = 32;
     private static List<String> argSet3 = new ArrayList<String>();
     private static List<String> argSet5 = new ArrayList<String>();
-
 
     public static void main(String[] args) {
         List<String> currentArgList = new ArrayList<>(Arrays.asList(args));
@@ -24,10 +28,6 @@ public class Controller {
         currentArgList.clear();
         currentArgList.addAll(uniqueArgList);
 
-        /*if (currentArgList.size() != 3 && currentArgList.size() != 5) {
-            System.out.println("Invalid amount of arguments");
-            return;
-        }*/
         fillArgumentSets();
         if (currentArgList.size() != 3 && currentArgList.size() != 5
                 || !listEqualsIgnoreOrder(argSet3, currentArgList)
