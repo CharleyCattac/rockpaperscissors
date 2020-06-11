@@ -10,13 +10,11 @@ import java.util.*;
 
 /**
  * @author Renate Lobach
- * @version 1.0
+ * @version 2.0
  */
 
 public class Controller {
     private static int KEY_SIZE_BYTES = 32;
-    private static List<String> argSet3 = new ArrayList<String>();
-    private static List<String> argSet5 = new ArrayList<String>();
 
     public static void main(String[] args) {
         List<String> currentArgList = new ArrayList<>(Arrays.asList(args));
@@ -28,11 +26,8 @@ public class Controller {
         currentArgList.clear();
         currentArgList.addAll(uniqueArgList);
 
-        fillArgumentSets();
-        if (currentArgList.size() != 3 && currentArgList.size() != 5
-                || !listEqualsIgnoreOrder(argSet3, currentArgList)
-                && !listEqualsIgnoreOrder(argSet5, currentArgList)){
-            System.out.println("Invalid arguments");
+        if (currentArgList.size() == 1 || currentArgList.size() % 2 != 1){
+            System.out.println("Invalid amount of arguments");
             return;
         }
 
@@ -41,8 +36,8 @@ public class Controller {
         byte[] computerMoveByte = new byte[1];
         secureRandom.nextBytes(computerMoveByte);
         int computerMoveByteValue = Math.abs((int) computerMoveByte[0]);
-        int computerMove = computerMoveByteValue * currentArgList.size() / 127;
-        String computerMoveString = currentArgList.get(computerMove);
+        int computerMove = 1 + computerMoveByteValue * (currentArgList.size()) / 127;
+        String computerMoveString = currentArgList.get(computerMove - 1);
 
         byte[] randomKey = new byte[KEY_SIZE_BYTES];
         for (int i = 0; i < randomKey.length; i++) {
@@ -94,8 +89,7 @@ public class Controller {
         System.out.println("Your move: " + playerMoveString);
         System.out.println("Computer move: " + computerMoveString);
 
-        MoveDynamic moveDynamic = MoveDynamic.getInstance();
-        int result = moveDynamic.defineResult(playerMoveString, computerMoveString);
+        int result = defineWinner(playerMove, computerMove, currentArgList.size());
 
         switch (result) {
             case -1:
@@ -111,25 +105,17 @@ public class Controller {
                 System.out.println("Not draw totally...");
         }
 
-        System.out.println("Computer move: " + computerMoveString);
-
         System.out.println("HMAC key: " + new String(randomKey, StandardCharsets.UTF_8));
     }
 
-    private static void fillArgumentSets() {
-        String  rock = "rock",
-                paper = "paper",
-                scissors = "scissors",
-                lizard = "lizard",
-                spock = "spock";
-
-        argSet3.add(rock);
-        argSet3.add(paper);
-        argSet3.add(scissors);
-
-        argSet5.addAll(argSet3);
-        argSet5.add(lizard);
-        argSet5.add(spock);
+    private static int defineWinner(int playerMove, int computerMove, int size) {
+        if (computerMove > playerMove) {
+            return (computerMove - playerMove > (size - 1) / 2) ? 1 : -1;
+        } else if (computerMove < playerMove) {
+            return (playerMove - computerMove > (size - 1) / 2) ? -1 : 1;
+        } else {
+            return 0;
+        }
     }
 
     private static String bytesToHex(byte[] hash) {
@@ -140,9 +126,5 @@ public class Controller {
             hexString.append(hex);
         }
         return hexString.toString();
-    }
-
-    public static <T> boolean listEqualsIgnoreOrder(List<T> list1, List<T> list2) {
-        return new HashSet<>(list1).equals(new HashSet<>(list2));
     }
 }
